@@ -31,7 +31,7 @@ public class TestController {
     public ResponseEntity currentUser(@AuthenticationPrincipal UserDetails userDetails){
         Map<Object, Object> model = new HashMap<>();
         model.put("username", userDetails.getUsername());
-        model.put("roles", userDetails.getAuthorities()
+        model.put("authorities", userDetails.getAuthorities()
                 .stream()
                 .map(a -> ((GrantedAuthority) a).getAuthority())
                 .collect(Collectors.toList())
@@ -40,16 +40,16 @@ public class TestController {
     }
 
     @RequestMapping(path = "/getData", method = RequestMethod.GET)
-    @PreAuthorize("hasRole('GET_DATA')")
-    public ResponseEntity<String> geData(HttpServletRequest request) {
-
+    @PreAuthorize("hasAuthority('GET_DATA')")
+    public ResponseEntity<String> geData(@AuthenticationPrincipal UserDetails userDetails) {
+        log.info("Set data for " + userDetails.getUsername());
         return ResponseEntity.ok("Hello");
     }
 
     @RequestMapping(path = "/setData", method = RequestMethod.POST)
-    @PreAuthorize("hasRole('SET_DATA')")
-    public ResponseEntity<String> seData(HttpServletRequest request) {
-
+    @PreAuthorize("hasAuthority('SET_DATA')")
+    public ResponseEntity<String> seData(@AuthenticationPrincipal UserDetails userDetails) {
+        log.info("Set data for " + userDetails.getUsername());
         return ResponseEntity.ok("Data set");
     }
 }
